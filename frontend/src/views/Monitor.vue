@@ -4,12 +4,15 @@ import { useRoute, useRouter } from 'vue-router';
 import { useServersStore } from '@/stores/servers';
 import { useMonitorStore } from '@/stores/monitor';
 import { useTerminalStateStore } from '@/stores/terminalState';
+import { monitorApi } from '@/api';
 import MetricCard from '@/components/MetricCard.vue';
 import ChipTable from '@/components/ChipTable.vue';
 import ProcessList from '@/components/ProcessList.vue';
 import SystemMonitor from '@/components/SystemMonitor.vue';
 import TerminalPanel from '@/components/TerminalPanel.vue';
 import FilesPanel from '@/components/FilesPanel.vue';
+import LineChart from '@/components/LineChart.vue';
+import type { NPUHistoryRecord } from '@/types';
 
 const route = useRoute();
 const router = useRouter();
@@ -32,6 +35,8 @@ const refreshInterval = computed(() => monitorStore.refreshInterval);
 const activeTab = ref<'npu' | 'system' | 'terminal'>('npu');
 const terminalSubTab = ref<'shell' | 'files'>('shell');
 const selectedChipIndex = ref(0);
+const historyLoading = ref(false);
+const historyData = ref<NPUHistoryRecord[]>([]);
 
 watch(serverId, (id) => {
   if (id) {
@@ -78,6 +83,34 @@ const selectedEcc = computed(() => {
     e => e.npuId === selectedChip.value!.npuId && e.chipId === selectedChip.value!.chipId
   );
 });
+
+const tempChartData = computed(() => 
+  historyData.value.map(d => ({ timestamp: d.timestamp, value: d.temperature }))
+);
+
+const powerChartData = computed(() => 
+  historyData.value.map(d => ({ timestamp: d.timestamp, value: d.powerUsage }))
+);
+
+async function fetchHistory() {
+  if (!selectedChip.value) return;
+  
+  historyLoading.value = true;
+  try {
+    const response = await monitorApi.getNpuHistory(
+      serverId.value,
+      selectedChip.value.npuId,
+      selectedChip.value.chipId
+    );
+    if (response.data.success && response.data.data) {
+      historyData.value = response.data.data.records;
+    }
+  } catch (e) {
+    console.error('Failed to fetch history:', e);
+  } finally {
+    historyLoading.value = false;
+  }
+}
 
 async function refreshNPU() {
   await monitorStore.fetchSummary(serverId.value);
@@ -129,6 +162,7 @@ onMounted(async () => {
     }
     monitorStore.startAutoRefresh(serverId.value);
     monitorStore.startSystemAutoRefresh(serverId.value);
+    fetchHistory();
   }
 });
 
@@ -147,7 +181,12 @@ watch(isConnected, (connected) => {
     }
     monitorStore.startAutoRefresh(serverId.value);
     monitorStore.startSystemAutoRefresh(serverId.value);
+    fetchHistory();
   }
+});
+
+watch(selectedChip, () => {
+  fetchHistory();
 });
 
 watch(serverId, async (newId, oldId) => {
@@ -349,6 +388,36 @@ watch(serverId, async (newId, oldId) => {
             :danger="90"
             icon="activity"
           />
+        </section>
+
+        <section class="history-section">
+          <div class="section-header">
+            <h3 class="section-title">NPU History</h3>
+            <button class="btn btn-secondary btn-sm" @click="fetchHistory" :disabled="historyLoading">
+              {{ historyLoading ? 'Loading...' : 'Refresh' }}
+            </button>
+          </div>
+          <div v-if="historyLoading && historyData.length === 0" class="history-loading">
+            Loading history data...
+          </div>
+          <div v-else class="charts-grid">
+            <LineChart
+              :data="tempChartData"
+              label="Temperature"
+              unit="C"
+              color="#ed4245"
+              :min="0"
+              :max="100"
+            />
+            <LineChart
+              :data="powerChartData"
+              label="Power Usage"
+              unit="W"
+              color="#faa61a"
+              :min="0"
+              :max="400"
+            />
+          </div>
         </section>
 
         <section class="tables-section">
@@ -584,6 +653,39 @@ watch(serverId, async (newId, oldId) => {
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: var(--spacing-md);
   margin-bottom: var(--spacing-lg);
+}
+
+.history-section {
+  margin-bottom: var(--spacing-lg);
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-md);
+}
+
+.section-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--header-primary);
+  margin: 0;
+}
+
+.history-loading {
+  text-align: center;
+  padding: var(--spacing-xl);
+  color: var(--text-muted);
+  background-color: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-md);
+}
+
+.charts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: var(--spacing-md);
 }
 
 .tables-section {
