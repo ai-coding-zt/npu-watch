@@ -51,7 +51,7 @@ defineEmits<{
           </span>
         </span>
       </div>
-      <div v-else-if="connected" class="info-row npu-usage-row">
+      <div v-else class="info-row npu-usage-row">
         <span class="info-label">NPU Usage</span>
         <span class="info-value npu-usage">
           <span class="npu-usage-value npu-usage-unknown">-/-</span>
