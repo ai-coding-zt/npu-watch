@@ -1,0 +1,106 @@
+:root {
+  --font-primary: 'gg sans', 'Noto Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  --font-mono: 'Fira Code', 'Consolas', 'Monaco', monospace;
+  
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.1);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 20px rgba(0, 0, 0, 0.15);
+  
+  --transition-fast: 150ms ease;
+  --transition-normal: 200ms ease;
+  --transition-slow: 300ms ease;
+  
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+  --spacing-2xl: 48px;
+}
+
+[data-theme="dark"] {
+  --bg-primary: #313338;
+  --bg-secondary: #2b2d31;
+  --bg-tertiary: #1e1f22;
+  --bg-modifier-hover: rgba(79, 84, 92, 0.4);
+  --bg-modifier-active: rgba(79, 84, 92, 0.6);
+  --bg-modifier-selected: rgba(79, 84, 92, 0.3);
+  
+  --text-normal: #dbdee1;
+  --text-muted: #949ba4;
+  --text-link: #00a8fc;
+  --header-primary: #f2f3f5;
+  --header-secondary: #b5bac1;
+  
+  --brand-experiment: #5865f2;
+  --brand-experiment-hover: #4752c4;
+  --green: #23a559;
+  --yellow: #f0b132;
+  --red: #f23f43;
+  --info: #00a8fc;
+  
+  --input-bg: #383a40;
+  --input-border: #1e1f22;
+  --input-placeholder: #6d6f78;
+  
+  --scrollbar-thin-thumb: #1a1b1e;
+  --scrollbar-thin-track: transparent;
+  --scrollbar-auto-thumb: #1a1b1e;
+  --scrollbar-auto-track: #2b2d31;
+  
+  --card-bg: #2b2d31;
+  --card-border: #1e1f22;
+  --sidebar-bg: #2b2d31;
+  --sidebar-border: #1e1f22;
+  --channel-bg: #313338;
+  --status-online: #23a559;
+  --status-idle: #f0b132;
+  --status-dnd: #f23f43;
+  --status-offline: #80848e;
+}
+
+[data-theme="light"] {
+  --bg-primary: #ffffff;
+  --bg-secondary: #f2f3f5;
+  --bg-tertiary: #e3e5e8;
+  --bg-modifier-hover: rgba(79, 84, 92, 0.08);
+  --bg-modifier-active: rgba(79, 84, 92, 0.16);
+  --bg-modifier-selected: rgba(79, 84, 92, 0.24);
+  
+  --text-normal: #2e3338;
+  --text-muted: #747f8d;
+  --text-link: #006ce0;
+  --header-primary: #060607;
+  --header-secondary: #4f5660;
+  
+  --brand-experiment: #5865f2;
+  --brand-experiment-hover: #4752c4;
+  --green: #23a559;
+  --yellow: #f0b132;
+  --red: #da373c;
+  --info: #00a8fc;
+  
+  --input-bg: #ffffff;
+  --input-border: #dee1e5;
+  --input-placeholder: #949ba4;
+  
+  --scrollbar-thin-thumb: #ced0d6;
+  --scrollbar-thin-track: transparent;
+  --scrollbar-auto-thumb: #ced0d6;
+  --scrollbar-auto-track: #f2f3f5;
+  
+  --card-bg: #ffffff;
+  --card-border: #e3e5e8;
+  --sidebar-bg: #f2f3f5;
+  --sidebar-border: #e3e5e8;
+  --channel-bg: #ffffff;
+  --status-online: #23a559;
+  --status-idle: #f0b132;
+  --status-dnd: #f23f43;
+  --status-offline: #80848e;
+}

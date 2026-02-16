@@ -1,0 +1,26 @@
+export const DEFAULT_BACKEND_PORT = 3000;
+export const DEFAULT_SSH_PORT = 22;
+
+export const DEFAULT_SSH_TIMEOUT_MS = 30000;
+export const DEFAULT_REFRESH_INTERVAL_MS = 30000;
+export const MIN_REFRESH_INTERVAL_MS = 10000;
+export const MAX_REFRESH_INTERVAL_MS = 300000;
+export const RETRY_DELAY_MS = 500;
+export const DEFAULT_COMMAND_RETRIES = 3;
+
+export const CACHE_RETENTION_24H_MS = 24 * 60 * 60 * 1000;
+export const CLEANUP_INTERVAL_1H_MS = 60 * 60 * 1000;
+
+export const MAX_RECONNECT_ATTEMPTS = 10;
+export const INITIAL_RECONNECT_INTERVAL_1M_MS = 60000;
+export const MAX_RECONNECT_INTERVAL_10M_MS = 600000;
+
+export const DEFAULT_TERMINAL_COLS = 80;
+export const DEFAULT_TERMINAL_ROWS = 24;
+
+export const WS_CLOSE_INVALID_PATH = 4000;
+export const WS_CLOSE_SERVER_NOT_FOUND = 4004;
+export const WS_CLOSE_NOT_CONNECTED = 4001;
+
+export const AES_IV_LENGTH = 16;
+export const AES_KEY_LENGTH = 32;
