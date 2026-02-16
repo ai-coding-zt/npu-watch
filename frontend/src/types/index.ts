@@ -157,3 +157,27 @@ export interface ApiResponse<T = unknown> {
   data?: T;
   error?: string;
 }
+
+export interface NPUHistoryRecord {
+  id: number;
+  serverId: string;
+  npuId: number;
+  chipId: number;
+  temperature: number;
+  powerUsage: number;
+  memoryUsageRate: number;
+  aiCoreUsage: number;
+  eccErrorCount: number;
+  timestamp: number;
+}
+
+export interface NPUHistoryQueryResult {
+  records: NPUHistoryRecord[];
+  summary: {
+    avgTemperature: number;
+    maxTemperature: number;
+    avgPowerUsage: number;
+    avgMemoryUsage: number;
+    avgAiCoreUsage: number;
+  };
+}

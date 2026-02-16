@@ -15,6 +15,20 @@ const connectingAll = ref(false);
 const connectedServers = computed(() => serversStore.connectedServers);
 const servers = computed(() => serversStore.servers);
 
+function getNpuUsage(serverId: string): { used: number; total: number } | null {
+  const summary = monitorStore.getSummary(serverId);
+  if (!summary || !summary.chips.length) return null;
+  
+  const total = summary.chips.length;
+  const usedNpuIds = new Set(
+    summary.processes
+      .filter(p => p.npuId >= 0)
+      .map(p => p.npuId)
+  );
+  
+  return { used: usedNpuIds.size, total };
+}
+
 function goToMonitor(serverId: string) {
   router.push(`/monitor/${serverId}`);
 }
@@ -131,6 +145,7 @@ watch(() => servers.value.length, async (newLength, oldLength) => {
           :key="server.id"
           :server="server"
           :connected="serversStore.isConnected(server.id)"
+          :npu-usage="getNpuUsage(server.id)"
           @click="goToMonitor(server.id)"
         />
       </div>

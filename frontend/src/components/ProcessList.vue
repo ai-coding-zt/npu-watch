@@ -10,11 +10,11 @@ const groupedProcesses = computed(() => {
   const groups = new Map<number, NPUProcess[]>();
   
   for (const proc of props.processes) {
-    const npuId = proc.npuId >= 0 ? proc.npuId : -1;
-    if (!groups.has(npuId)) {
-      groups.set(npuId, []);
+    if (proc.npuId < 0) continue;
+    if (!groups.has(proc.npuId)) {
+      groups.set(proc.npuId, []);
     }
-    groups.get(npuId)!.push(proc);
+    groups.get(proc.npuId)!.push(proc);
   }
   
   return Array.from(groups.entries())
@@ -35,7 +35,7 @@ const groupedProcesses = computed(() => {
             <rect x="4" y="4" width="16" height="16" rx="2" ry="2" />
             <rect x="9" y="9" width="6" height="6" />
           </svg>
-          <span>NPU {{ group.npuId >= 0 ? group.npuId : 'Unknown' }}</span>
+          <span>NPU {{ group.npuId }}</span>
           <span class="process-count">{{ group.processes.length }} process(es)</span>
         </div>
         <table class="table">
