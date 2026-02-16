@@ -1,24 +1,29 @@
 #!/bin/bash
 
-# NPU Watch - 一键启动脚本
-# 用于启动前端和后端服务
-
 set -e
 
-# 颜色定义
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
-NC='\033[0m' # No Color
+NC='\033[0m'
 
-# 获取脚本所在目录
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-
-# 默认模式
 MODE="dev"
 
-# 解析参数
+BACKEND_HOST="${BACKEND_HOST:-0.0.0.0}"
+BACKEND_PORT="${BACKEND_PORT:-3000}"
+FRONTEND_PORT="${FRONTEND_PORT:-5173}"
+
+if [ -f "$SCRIPT_DIR/.env" ]; then
+    set -a
+    source "$SCRIPT_DIR/.env"
+    set +a
+    BACKEND_HOST="${BACKEND_HOST:-0.0.0.0}"
+    BACKEND_PORT="${BACKEND_PORT:-3000}"
+    FRONTEND_PORT="${FRONTEND_PORT:-5173}"
+fi
+
 while [[ $# -gt 0 ]]; do
     case $1 in
         --prod|-p)
@@ -39,9 +44,10 @@ while [[ $# -gt 0 ]]; do
             echo "  -p, --prod    生产模式"
             echo "  -h, --help    显示帮助信息"
             echo ""
-            echo "端口:"
-            echo "  后端: 3000"
-            echo "  前端: 5173 (开发) / 3000 (生产，通过后端代理)"
+            echo "配置 (.env 文件):"
+            echo "  BACKEND_HOST    后端监听地址 (默认: 0.0.0.0)"
+            echo "  BACKEND_PORT    后端端口 (默认: 3000)"
+            echo "  FRONTEND_PORT   前端端口 (默认: 5173)"
             exit 0
             ;;
         *)
@@ -57,15 +63,15 @@ echo -e "${BLUE}   NPU Watch - 启动脚本${NC}"
 echo -e "${BLUE}======================================${NC}"
 echo ""
 echo -e "模式: ${YELLOW}$MODE${NC}"
+echo -e "后端: ${BLUE}$BACKEND_HOST:$BACKEND_PORT${NC}"
+echo -e "前端: ${BLUE}0.0.0.0:$FRONTEND_PORT${NC}"
 echo ""
 
-# 检查是否已安装依赖
 if [ ! -d "$SCRIPT_DIR/backend/node_modules" ] || [ ! -d "$SCRIPT_DIR/frontend/node_modules" ]; then
     echo -e "${RED}错误: 依赖未安装，请先运行 ./install.sh${NC}"
     exit 1
 fi
 
-# 清理函数
 cleanup() {
     echo ""
     echo -e "${YELLOW}正在停止服务...${NC}"
@@ -81,8 +87,12 @@ cleanup() {
 
 trap cleanup SIGINT SIGTERM
 
+export HOST="$BACKEND_HOST"
+export PORT="$BACKEND_PORT"
+export VITE_PORT="$FRONTEND_PORT"
+export VITE_API_URL="http://localhost:$BACKEND_PORT"
+
 if [ "$MODE" = "prod" ]; then
-    # 生产模式
     echo -e "${YELLOW}检查构建产物...${NC}"
     
     if [ ! -d "$SCRIPT_DIR/backend/dist" ] || [ ! -d "$SCRIPT_DIR/frontend/dist" ]; then
@@ -97,11 +107,10 @@ if [ "$MODE" = "prod" ]; then
     
     echo -e "${GREEN}启动前端服务 (生产模式)...${NC}"
     cd "$SCRIPT_DIR/frontend"
-    npx vite preview --port 5173 &
+    npx vite preview --port "$FRONTEND_PORT" --host &
     FRONTEND_PID=$!
     
 else
-    # 开发模式
     echo -e "${GREEN}启动后端服务 (开发模式)...${NC}"
     cd "$SCRIPT_DIR/backend"
     npm run dev &
@@ -118,11 +127,10 @@ echo -e "${GREEN}======================================${NC}"
 echo -e "${GREEN}   服务已启动!${NC}"
 echo -e "${GREEN}======================================${NC}"
 echo ""
-echo -e "后端 API: ${BLUE}http://localhost:3000${NC}"
-echo -e "前端界面: ${BLUE}http://localhost:5173${NC}"
+echo -e "后端 API: ${BLUE}http://$BACKEND_HOST:$BACKEND_PORT${NC}"
+echo -e "前端界面: ${BLUE}http://localhost:$FRONTEND_PORT${NC}"
 echo ""
 echo -e "按 ${YELLOW}Ctrl+C${NC} 停止服务"
 echo ""
 
-# 等待进程
 wait $BACKEND_PID $FRONTEND_PID

@@ -7,6 +7,7 @@ import { scheduler } from './services/scheduler.js';
 import { setupWebSocket } from './routes/ws.js';
 
 const app = express();
+const HOST = process.env.HOST || '0.0.0.0';
 const PORT = process.env.PORT || 3000;
 
 app.use(cors());
@@ -28,9 +29,9 @@ const wss = new WebSocketServer({ server });
 
 setupWebSocket(wss);
 
-server.listen(PORT, async () => {
-  console.log(`NPU Watch API running on http://localhost:${PORT}`);
-  console.log(`WebSocket server running on ws://localhost:${PORT}/api/terminal/:serverId`);
+server.listen(Number(PORT), HOST, async () => {
+  console.log(`NPU Watch API running on http://${HOST}:${PORT}`);
+  console.log(`WebSocket server running on ws://${HOST}:${PORT}/api/terminal/:serverId`);
   
   try {
     await scheduler.start();

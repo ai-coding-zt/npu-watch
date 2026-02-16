@@ -62,6 +62,61 @@ chmod +x start.sh
 - 前端界面: http://localhost:5173
 - 后端 API: http://localhost:3000
 
+## 配置
+
+项目支持通过 `.env` 文件配置端口和地址。
+
+### 配置文件
+
+首次运行 `./install.sh` 会自动从 `.env.example` 复制创建 `.env` 文件：
+
+```bash
+# NPU Watch 配置
+
+# 后端配置
+BACKEND_HOST=0.0.0.0    # 监听地址 (0.0.0.0 = 所有网卡)
+BACKEND_PORT=3000       # 后端端口
+
+# 前端配置
+FRONTEND_PORT=5173      # 前端端口
+```
+
+### 修改配置
+
+1. 编辑项目根目录的 `.env` 文件
+2. 修改需要更改的配置项
+3. 重启服务 `./start.sh`
+
+### 环境变量优先级
+
+```bash
+# 也可以通过命令行覆盖配置
+BACKEND_PORT=8080 FRONTEND_PORT=80 ./start.sh
+```
+
+## 从旧版本升级
+
+如果你使用的是没有 `.env` 配置的旧版本：
+
+```bash
+# 1. 拉取最新代码
+git pull origin main
+
+# 2. 创建配置文件
+cp .env.example .env
+
+# 3. (可选) 编辑配置
+vim .env
+
+# 4. 更新依赖并构建
+./install.sh
+
+# 5. 启动服务
+./start.sh
+```
+
+旧版本的数据库文件 (`npu-watch.db`) 会自动保留，无需迁移。
+
 ## 项目结构
 
 ```

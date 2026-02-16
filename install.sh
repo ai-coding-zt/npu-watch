@@ -20,6 +20,18 @@ echo -e "${BLUE}   NPU Watch - 安装脚本${NC}"
 echo -e "${BLUE}======================================${NC}"
 echo ""
 
+cd "$SCRIPT_DIR"
+
+if [ -f ".env" ]; then
+    echo -e "${GREEN}✓ 配置文件 .env 已存在${NC}"
+else
+    if [ -f ".env.example" ]; then
+        cp .env.example .env
+        echo -e "${GREEN}✓ 已创建配置文件 .env (从 .env.example 复制)${NC}"
+    fi
+fi
+echo ""
+
 # 检查 Node.js
 echo -e "${YELLOW}[1/4] 检查 Node.js 环境...${NC}"
 if ! command -v node &> /dev/null; then
