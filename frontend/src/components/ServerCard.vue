@@ -51,6 +51,12 @@ defineEmits<{
           </span>
         </span>
       </div>
+      <div v-else-if="connected" class="info-row npu-usage-row">
+        <span class="info-label">NPU Usage</span>
+        <span class="info-value npu-usage">
+          <span class="npu-usage-value npu-usage-unknown">-/-</span>
+        </span>
+      </div>
     </div>
     <div class="card-footer">
       <button class="btn btn-primary btn-sm" @click.stop="$emit('click')">
@@ -149,6 +155,10 @@ defineEmits<{
 .npu-usage-value {
   font-weight: 600;
   color: var(--brand-experiment);
+}
+
+.npu-usage-unknown {
+  color: var(--text-muted);
 }
 
 .npu-usage-bar {
