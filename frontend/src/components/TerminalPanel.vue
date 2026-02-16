@@ -27,7 +27,9 @@ const fitAddons = new Map<string, FitAddon>();
 
 const wsUrl = computed(() => {
   const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-  return `${protocol}//localhost:3000/api/terminal/${props.serverId}`;
+  const host = window.location.hostname;
+  const port = 3000; // Backend WebSocket port
+  return `${protocol}//${host}:${port}/api/terminal/${props.serverId}`;
 });
 
 function refitTerminal(sessionId: string) {
