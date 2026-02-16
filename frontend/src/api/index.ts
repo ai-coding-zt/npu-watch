@@ -8,7 +8,8 @@ import type {
   NPUChip,
   ConnectionStatus,
   SystemSummary,
-  ApiResponse
+  ApiResponse,
+  NPUHistoryQueryResult
 } from '@/types';
 
 const api = axios.create({
@@ -59,6 +60,11 @@ export const monitorApi = {
 
   getSystem: (serverId: string) => 
     api.get<ApiResponse<SystemSummary>>(`/servers/${serverId}/system`),
+
+  getNpuHistory: (serverId: string, npuId: number, chipId: number, startTime?: number, endTime?: number) => 
+    api.get<ApiResponse<NPUHistoryQueryResult>>(`/servers/${serverId}/npu-history`, {
+      params: { npuId, chipId, startTime, endTime }
+    }),
 };
 
 export default api;

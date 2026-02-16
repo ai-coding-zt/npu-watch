@@ -4,6 +4,7 @@ import type { ServerConfig } from '@/types';
 defineProps<{
   server: ServerConfig;
   connected: boolean;
+  npuUsage?: { used: number; total: number } | null;
 }>();
 
 defineEmits<{
@@ -39,6 +40,21 @@ defineEmits<{
         <span class="info-label">Auth</span>
         <span class="info-value">
           <span class="badge badge-info">{{ server.authType }}</span>
+        </span>
+      </div>
+      <div v-if="connected && npuUsage" class="info-row npu-usage-row">
+        <span class="info-label">NPU Usage</span>
+        <span class="info-value npu-usage">
+          <span class="npu-usage-value">{{ npuUsage.used }}/{{ npuUsage.total }}</span>
+          <span class="npu-usage-bar">
+            <span class="npu-usage-fill" :style="{ width: `${(npuUsage.used / npuUsage.total) * 100}%` }"></span>
+          </span>
+        </span>
+      </div>
+      <div v-else class="info-row npu-usage-row">
+        <span class="info-label">NPU Usage</span>
+        <span class="info-value npu-usage">
+          <span class="npu-usage-value npu-usage-unknown">-/-</span>
         </span>
       </div>
     </div>
@@ -122,5 +138,43 @@ defineEmits<{
 .btn-sm {
   width: 100%;
   padding: var(--spacing-sm);
+}
+
+.npu-usage-row {
+  margin-top: var(--spacing-sm);
+  padding-top: var(--spacing-sm);
+  border-top: 1px solid var(--card-border);
+}
+
+.npu-usage {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.npu-usage-value {
+  font-weight: 600;
+  color: var(--brand-experiment);
+}
+
+.npu-usage-unknown {
+  color: var(--text-muted);
+}
+
+.npu-usage-bar {
+  flex: 1;
+  height: 6px;
+  background-color: var(--bg-tertiary);
+  border-radius: 3px;
+  overflow: hidden;
+  min-width: 60px;
+}
+
+.npu-usage-fill {
+  display: block;
+  height: 100%;
+  background-color: var(--brand-experiment);
+  border-radius: 3px;
+  transition: width 0.3s ease;
 }
 </style>
