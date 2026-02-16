@@ -16,6 +16,7 @@ const props = defineProps<{
 }>();
 
 const chartColor = props.color || '#5865F2';
+const gradientId = `gradient-${props.label.replace(/\s+/g, '-')}`;
 const padding = { top: 20, right: 20, bottom: 30, left: 50 };
 const width = 400;
 const height = 150;
@@ -92,10 +93,17 @@ const avgValue = computed(() => {
     </div>
     <svg :viewBox="`0 0 ${width} ${height}`" class="chart-svg" preserveAspectRatio="xMidYMid meet">
       <defs>
-        <linearGradient :id="`gradient-${label}`" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" :stop-color="chartColor" stop-opacity="0.3"/>
+        <linearGradient :id="gradientId" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" :stop-color="chartColor" stop-opacity="0.5"/>
           <stop offset="100%" :stop-color="chartColor" stop-opacity="0.05"/>
         </linearGradient>
+        <filter :id="`glow-${gradientId}`" x="-20%" y="-20%" width="140%" height="140%">
+          <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+          <feMerge>
+            <feMergeNode in="coloredBlur"/>
+            <feMergeNode in="SourceGraphic"/>
+          </feMerge>
+        </filter>
       </defs>
       
       <g class="y-axis">
@@ -119,8 +127,8 @@ const avgValue = computed(() => {
         </text>
       </g>
       
-      <path v-if="areaPath" :d="areaPath" :fill="`url(#gradient-${label})`" />
-      <polyline v-if="points" :points="points" class="data-line" :stroke="chartColor" />
+      <path v-if="areaPath" :d="areaPath" :fill="`url(#${gradientId})`" />
+      <polyline v-if="points" :points="points" class="data-line" :stroke="chartColor" :filter="`url(#glow-${gradientId})`" />
     </svg>
     <div v-if="data.length === 0" class="no-data">No history data</div>
   </div>
